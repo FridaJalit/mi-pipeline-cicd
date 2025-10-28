@@ -42,6 +42,6 @@ jobs:
           # React → build
           # Vue → dist
           # Estático → ./public o ./ (raíz)
-          publish_dir: ./build
+          publish_dir: ./public
 
 
