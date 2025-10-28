@@ -3,18 +3,18 @@ name: Despliegue continuo a GitHub Pages
 # 🔹 CUÁNDO se ejecutará
 on:
   push:
-    branches: [ "main" ]   # Cada vez que hagas commit a main
+    branches: [ "main" ]   # Se ejecuta al hacer push a main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest   # Entorno virtual de ejecución
+    runs-on: ubuntu-latest
 
     steps:
       # 1️⃣ Descargar tu código
       - name: Checkout del código
         uses: actions/checkout@v3
 
-      # 2️⃣ Instalar Node.js
+      # 2️⃣ Configurar Node.js
       - name: Configurar Node.js
         uses: actions/setup-node@v3
         with:
@@ -24,19 +24,24 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
-      # 4️⃣ Ejecutar pruebas
-       # name: Ejecutar pruebas
-         # run: npm test
-
-      # 5️⃣ Generar build de producción
+      # 4️⃣ Ejecutar build (si es proyecto React o Vue)
       - name: Generar build de producción
-        run: npm run build
+        run: |
+          if [ -f package.json ] && grep -q '"build"' package.json; then
+            npm run build
+          else
+            echo "No build step needed"
+          fi
 
-      # 6️⃣ Desplegar automáticamente en GitHub Pages
+      # 5️⃣ Desplegar en GitHub Pages
       - name: Desplegar en GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          # Cambia la carpeta según tu proyecto:
+          # React → build
+          # Vue → dist
+          # Estático → ./public o ./ (raíz)
+          publish_dir: ./build
 
 
