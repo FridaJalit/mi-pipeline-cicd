@@ -1,0 +1,42 @@
+name: Despliegue continuo a GitHub Pages
+
+# 🔹 CUÁNDO se ejecutará
+on:
+  push:
+    branches: [ "main" ]   # Cada vez que hagas commit a main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest   # Entorno virtual de ejecución
+
+    steps:
+      # 1️⃣ Descargar tu código
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      # 2️⃣ Instalar Node.js
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3️⃣ Instalar dependencias
+      - name: Instalar dependencias
+        run: npm install
+
+      # 4️⃣ Ejecutar pruebas
+      - name: Ejecutar pruebas
+        run: npm test
+
+      # 5️⃣ Generar build de producción
+      - name: Generar build de producción
+        run: npm run build
+
+      # 6️⃣ Desplegar automáticamente en GitHub Pages
+      - name: Desplegar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+
+
